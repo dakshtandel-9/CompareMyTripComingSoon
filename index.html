@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>CompareMyTrip — Coming Soon</title>
+<meta name="description" content="CompareMyTrip is packing its bags. Weekend treks, domestic tours, international holidays, flights, hotels and visa services — launching soon." />
+<style>
+
+  :root {
+    --white:      #FFFFFF;
+    --ink:        #0A0A0B;
+    --yellow:     #FFC72C;
+    --yellow-ink: #C98F00;
+    --grey:       #6E6B63;
+    --hair:       #E7E3D9;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: var(--white);
+    color: var(--ink);
+  }
+
+  body {
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+    background:
+      radial-gradient(760px 520px at 92% -8%,  rgba(255,199,44,0.20), transparent 62%),
+      radial-gradient(620px 460px at -6% 106%, rgba(255,199,44,0.14), transparent 60%),
+      var(--white);
+  }
+
+  ::selection { background: var(--yellow); color: var(--ink); }
+
+  a { color: inherit; text-decoration: none; }
+
+  :focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* ---------------- flight route backdrop ---------------- */
+
+  .route {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .route .line {
+    fill: none;
+    stroke: var(--yellow);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-dasharray: 9 11;
+    opacity: 0.5;
+    animation: drift 2.4s linear infinite;
+  }
+
+  @keyframes drift { to { stroke-dashoffset: -20; } }
+
+  /* ---------------- screen shell ---------------- */
+
+  .screen {
+    position: relative;
+    z-index: 1;
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    padding: clamp(16px, 3.2vh, 34px) clamp(18px, 5vw, 76px);
+    padding-bottom: max(clamp(16px, 3.2vh, 34px), env(safe-area-inset-bottom));
+    overflow: hidden;
+  }
+
+  /* ---------------- header ---------------- */
+
+  .top {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .top img {
+    display: block;
+    height: clamp(24px, min(3.4vw, 4.4vh), 40px);
+    width: auto;
+  }
+
+  .live {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 15px;
+    border: 1px solid var(--hair);
+    border-radius: 999px;
+    background: var(--white);
+    font-size: clamp(9px, min(0.85vw, 1.25vh), 11px);
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--grey);
+    white-space: nowrap;
+  }
+
+  .live .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--yellow);
+    box-shadow: 0 0 0 4px rgba(255,199,44,0.24);
+    animation: blink 2.2s ease-in-out infinite;
+  }
+
+  @keyframes blink { 50% { opacity: 0.35; } }
+
+  /* ---------------- centre stage ---------------- */
+
+  .stage {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: clamp(12px, 2.2vh, 26px);
+    padding: clamp(12px, 2.5vh, 28px) 0;
+  }
+
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: clamp(9px, min(0.9vw, 1.3vh), 11.5px);
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--yellow-ink);
+  }
+
+  .eyebrow::before {
+    content: "";
+    width: clamp(22px, 3vw, 46px);
+    height: 2px;
+    background: var(--yellow);
+    flex: none;
+  }
+
+  h1 {
+    margin: 0;
+    font-family: 'Archivo Black', 'Arial Black', 'Helvetica Neue', Helvetica, sans-serif;
+    font-weight: 900;
+    font-size: clamp(1.55rem, min(7vw, 7.6vh), 5.4rem);
+    line-height: 1.06;
+    letter-spacing: -0.025em;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+
+  /* the logo's own yellow suitcase-block, scaled up */
+  h1 .block {
+    background: var(--yellow);
+    padding: 0.01em 0.14em 0.03em;
+    border-radius: 0.06em;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+
+  .sub {
+    margin: 0;
+    max-width: 54ch;
+    font-size: clamp(12.5px, min(1.25vw, 1.85vh), 17px);
+    line-height: 1.55;
+    color: var(--grey);
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(6px, 0.9vh, 10px);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .chips li {
+    padding: clamp(6px, 1vh, 9px) clamp(10px, 1.3vw, 16px);
+    border: 1px solid var(--hair);
+    border-radius: 999px;
+    background: var(--white);
+    font-size: clamp(9.5px, min(0.92vw, 1.35vh), 12px);
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  /* ---------------- contact rail ---------------- */
+
+  .rail {
+    flex: none;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(10px, 1.6vw, 28px);
+    padding-top: clamp(12px, 2.2vh, 24px);
+    border-top: 1px solid var(--hair);
+  }
+
+  .rail a {
+    display: flex;
+    align-items: center;
+    gap: clamp(8px, 0.9vw, 13px);
+    min-width: 0;
+    transition: transform 0.16s ease, opacity 0.16s ease;
+  }
+
+  .rail a:hover { transform: translateY(-2px); }
+
+  .rail .icon {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: clamp(28px, min(2.6vw, 3.9vh), 38px);
+    height: clamp(28px, min(2.6vw, 3.9vh), 38px);
+    border-radius: 9px;
+    background: var(--yellow);
+    color: var(--ink);
+  }
+
+  .rail .icon svg {
+    width: 52%;
+    height: 52%;
+  }
+
+  .rail .txt { min-width: 0; }
+
+  .rail .label {
+    display: block;
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: clamp(8px, min(0.72vw, 1.1vh), 10px);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--grey);
+    margin-bottom: 3px;
+  }
+
+  .rail .value {
+    display: block;
+    font-size: clamp(11.5px, min(1.12vw, 1.65vh), 15.5px);
+    font-weight: 650;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* ---------------- responsive ---------------- */
+
+  @media (max-width: 620px) {
+    .live { display: none; }
+    .top { justify-content: flex-start; }
+    .rail {
+      grid-template-columns: 1fr;
+      gap: clamp(8px, 1.4vh, 14px);
+    }
+    .rail .value { font-size: clamp(13px, 3.6vw, 16px); }
+    .sub { font-size: clamp(12.5px, 3.3vw, 15px); }
+    h1 { font-size: clamp(1.6rem, 8.4vw, 3rem); }
+  }
+
+  /* short viewports (landscape phones) shed the least-critical row */
+  @media (max-height: 480px) {
+    .chips { display: none; }
+    .sub { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .route .line { animation: none; }
+    .route .plane { display: none; }
+    .live .dot { animation: none; }
+    .rail a { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+  <svg class="route" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <path id="routeLine" class="line"
+          d="M -80 812 C 250 742, 470 622, 700 472 S 1130 176, 1530 74" />
+    <g class="plane">
+      <path d="M 17 0 L -10 -9 L -4 0 L -10 9 Z" fill="#0A0A0B" />
+      <animateMotion dur="18s" repeatCount="indefinite" rotate="auto">
+        <mpath xlink:href="#routeLine" href="#routeLine" />
+      </animateMotion>
+    </g>
+  </svg>
+
+  <div class="screen">
+
+    <header class="top">
+      <img src="assets/logo.png" alt="CompareMyTrip" />
+      <span class="live"><span class="dot"></span> Launching Soon</span>
+    </header>
+
+    <main class="stage">
+      <p class="eyebrow">Our new website is on its way</p>
+
+      <h1>Pack your bags,<br />we're coming<br />to <span class="block">pick you</span></h1>
+
+      <p class="sub">Your next adventure starts here — treks, tours, holidays and everything in between, planned end to end by people who actually travel.</p>
+
+      <ul class="chips">
+        <li>Weekend Treks</li>
+        <li>Domestic Tours</li>
+        <li>International Holidays</li>
+        <li>Flights</li>
+        <li>Hotels</li>
+        <li>Visa Services</li>
+      </ul>
+    </main>
+
+    <footer class="rail">
+      <a href="tel:+919535976868">
+        <span class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </span>
+        <span class="txt">
+          <span class="label">Call / WhatsApp</span>
+          <span class="value">+91 95359 76868</span>
+        </span>
+      </a>
+
+      <a href="tel:08069277012">
+        <span class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3h3l2 5-2.2 1.3a13 13 0 0 0 5.9 5.9L14 13l5 2v3a2 2 0 0 1-2.2 2A16.8 16.8 0 0 1 2 5.2 2 2 0 0 1 4 3z"/></svg>
+        </span>
+        <span class="txt">
+          <span class="label">Office</span>
+          <span class="value">080 6927 7012</span>
+        </span>
+      </a>
+
+      <a href="mailto:support@comparemytrip.in">
+        <span class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-9 6-9-6"/></svg>
+        </span>
+        <span class="txt">
+          <span class="label">Email</span>
+          <span class="value">support@comparemytrip.in</span>
+        </span>
+      </a>
+    </footer>
+
+  </div>
+
+</body>
+</html>
