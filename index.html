@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>CompareMyTrip — Coming Soon</title>
-<meta name="description" content="CompareMyTrip is packing its bags. Weekend treks, domestic tours, international holidays, flights, hotels and visa services — launching soon." />
+<meta name="description" content="Your next adventure starts here. CompareMyTrip plans weekend treks, domestic tours, international holidays, flights, hotels and visas — end to end, by people who actually travel. Launching soon." />
 <style>
 
   :root {
@@ -89,7 +89,6 @@
     flex: none;
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: 20px;
   }
 
@@ -99,37 +98,18 @@
     width: auto;
   }
 
-  .live {
-    display: inline-flex;
-    align-items: center;
-    gap: 9px;
-    padding: 8px 15px;
-    border: 1px solid var(--hair);
-    border-radius: 999px;
-    background: var(--white);
-    font-size: clamp(9px, min(0.85vw, 1.25vh), 11px);
-    font-weight: 600;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--grey);
-    white-space: nowrap;
-  }
-
-  .live .dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--yellow);
-    box-shadow: 0 0 0 4px rgba(255,199,44,0.24);
-    animation: blink 2.2s ease-in-out infinite;
-  }
-
-  @keyframes blink { 50% { opacity: 0.35; } }
-
   /* ---------------- centre stage ---------------- */
 
-  .stage {
+  .middle {
     flex: 1 1 auto;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    align-items: center;
+    gap: clamp(16px, 3vw, 48px);
+  }
+
+  .stage {
     min-height: 0;
     display: flex;
     flex-direction: column;
@@ -172,11 +152,11 @@
 
   /* the logo's own yellow suitcase-block, scaled up */
   h1 .block {
+    display: inline-block;
     background: var(--yellow);
-    padding: 0.01em 0.14em 0.03em;
+    line-height: 0.86;          /* sets the yellow band height, not the font metrics */
+    padding: 0.055em 0.14em;
     border-radius: 0.06em;
-    -webkit-box-decoration-break: clone;
-    box-decoration-break: clone;
   }
 
   .sub {
@@ -207,6 +187,96 @@
     text-transform: uppercase;
     color: var(--ink);
     white-space: nowrap;
+  }
+
+  /* ---------------- dino game ---------------- */
+
+  .game-wrap {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .game-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: clamp(9px, min(0.85vw, 1.2vh), 11px);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--grey);
+  }
+
+  .game-head .score {
+    color: var(--ink);
+    font-weight: 700;
+  }
+
+  .game-stage {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 7;
+    border: 1px solid var(--hair);
+    border-radius: 14px;
+    background: linear-gradient(180deg, rgba(255,199,44,0.07), rgba(255,199,44,0.015) 55%, transparent);
+    overflow: hidden;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  #dinoCanvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .game-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-align: center;
+    padding: 12px;
+    background: rgba(255,255,255,0.72);
+    backdrop-filter: blur(1.5px);
+    transition: opacity 0.15s ease;
+  }
+
+  .game-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .game-overlay strong {
+    font-family: 'Archivo Black', 'Arial Black', 'Helvetica Neue', Helvetica, sans-serif;
+    font-size: clamp(13px, min(1.5vw, 2.1vh), 18px);
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  .game-overlay span {
+    font-size: clamp(10.5px, min(0.95vw, 1.35vh), 13px);
+    color: var(--grey);
+  }
+
+  .game-hint {
+    align-self: center;
+    font-size: clamp(9px, min(0.8vw, 1.1vh), 11px);
+    color: var(--grey);
+  }
+
+  @media (max-width: 620px), (max-height: 480px) {
+    .middle { grid-template-columns: 1fr; }
+    .game-wrap { order: 2; }
   }
 
   /* ---------------- contact rail ---------------- */
@@ -272,8 +342,6 @@
   /* ---------------- responsive ---------------- */
 
   @media (max-width: 620px) {
-    .live { display: none; }
-    .top { justify-content: flex-start; }
     .rail {
       grid-template-columns: 1fr;
       gap: clamp(8px, 1.4vh, 14px);
@@ -292,7 +360,6 @@
   @media (prefers-reduced-motion: reduce) {
     .route .line { animation: none; }
     .route .plane { display: none; }
-    .live .dot { animation: none; }
     .rail a { transition: none; }
   }
 </style>
@@ -314,25 +381,41 @@
 
     <header class="top">
       <img src="assets/logo.png" alt="CompareMyTrip" />
-      <span class="live"><span class="dot"></span> Launching Soon</span>
     </header>
 
-    <main class="stage">
-      <p class="eyebrow">Our new website is on its way</p>
+    <div class="middle">
+      <main class="stage">
+        <p class="eyebrow">Our new website is on its way</p>
 
-      <h1>Pack your bags,<br />we're coming<br />to <span class="block">pick you</span></h1>
+        <h1>Pack your bags,<br />we're coming<br />to <span class="block">pick you</span></h1>
 
-      <p class="sub">Your next adventure starts here — treks, tours, holidays and everything in between, planned end to end by people who actually travel.</p>
+        <p class="sub">Your next adventure starts here — treks, tours, holidays and everything in between, planned end to end by people who actually travel.</p>
 
-      <ul class="chips">
-        <li>Weekend Treks</li>
-        <li>Domestic Tours</li>
-        <li>International Holidays</li>
-        <li>Flights</li>
-        <li>Hotels</li>
-        <li>Visa Services</li>
-      </ul>
-    </main>
+        <ul class="chips">
+          <li>Weekend Treks</li>
+          <li>Domestic Tours</li>
+          <li>International Holidays</li>
+          <li>Flights</li>
+          <li>Hotels</li>
+          <li>Visa Services</li>
+        </ul>
+      </main>
+
+      <div class="game-wrap">
+        <div class="game-head">
+          <span>While you wait — take a trek</span>
+          <span class="score">HI <span id="dinoHi">00000</span>&nbsp;&nbsp;<span id="dinoScore">00000</span></span>
+        </div>
+        <div class="game-stage" id="dinoStage" tabindex="0" role="application" aria-label="Endless runner game. Press space or tap to jump.">
+          <canvas id="dinoCanvas"></canvas>
+          <div class="game-overlay" id="dinoOverlay">
+            <strong id="dinoOverlayTitle">Tap or press Space to run</strong>
+            <span>Hop the pines. Duck under the birds with ↓.</span>
+          </div>
+        </div>
+        <span class="game-hint">Space / ↑ / Tap to jump · Hold ↓ to duck</span>
+      </div>
+    </div>
 
     <footer class="rail">
       <a href="tel:+919535976868">
@@ -367,6 +450,518 @@
     </footer>
 
   </div>
+
+  <script>
+  (function () {
+    'use strict';
+
+    var stageEl      = document.getElementById('dinoStage');
+    var canvas       = document.getElementById('dinoCanvas');
+    var ctx          = canvas.getContext('2d');
+    var overlay      = document.getElementById('dinoOverlay');
+    var overlayTitle = document.getElementById('dinoOverlayTitle');
+    var scoreEl      = document.getElementById('dinoScore');
+    var hiEl         = document.getElementById('dinoHi');
+
+    var INK    = '#0A0A0B';
+    var HAIR   = '#E7E3D9';
+    var YELLOW = '#FFC72C';
+    var DEAD   = '#B8B4A8';
+
+    var DPR = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
+
+    /* pacing — speed is in screen-widths per second, so the run feels the same
+       at any canvas size. It ramps from SPEED_START up to SPEED_MAX across
+       RAMP px of travel, which is roughly the first minute of play. */
+    var SPEED_START = 0.42;
+    var SPEED_MAX   = 1.15;
+    var RAMP        = 18000;
+
+    /* recomputed on every resize */
+    var W = 0, H = 0, GROUND_Y = 0, S = 1, C_R = 0;
+    var GRAVITY = 0, JUMP_V = 0, DUCK_JUMP_V = 0;
+
+    function resize() {
+      var rect = stageEl.getBoundingClientRect();
+      W = Math.max(240, rect.width);
+      H = Math.max(120, rect.height);
+      canvas.width  = Math.round(W * DPR);
+      canvas.height = Math.round(H * DPR);
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+
+      GROUND_Y    = H * 0.78;
+      S           = H / 200;      /* sprites are drawn against a 200px-tall reference */
+      C_R         = 18 * S;       /* outer radius of the C */
+      GRAVITY     = 7.2 * H;      /* apex ~0.42H, hang time ~0.68s */
+      JUMP_V      = -2.45 * H;
+      DUCK_JUMP_V = -1.85 * H;
+    }
+
+    var runner, obstacles, clouds, ranges, distance, hi;
+    var running, gameOver, ducking, nextSpawn, groundOffset;
+
+    function loadHi() {
+      try { return parseInt(localStorage.getItem('cmt_dino_hi') || '0', 10) || 0; }
+      catch (e) { return 0; }
+    }
+    function saveHi(v) {
+      try { localStorage.setItem('cmt_dino_hi', String(v)); } catch (e) {}
+    }
+
+    function speedNow() {
+      var t = Math.min(1, distance / RAMP);
+      return W * (SPEED_START + (SPEED_MAX - SPEED_START) * t);
+    }
+
+    /* ---------------- mountain ranges ---------------- */
+
+    function sizePeak(p, cfg) {
+      p.w = cfg.wMin + Math.random() * (cfg.wMax - cfg.wMin);
+      p.h = cfg.hMin + Math.random() * (cfg.hMax - cfg.hMin);
+    }
+
+    /* Peaks are laid end to end with `step` < 1 so neighbours overlap into one
+       continuous silhouette, then recycled front-to-back as they scroll off. */
+    function buildRange(cfg) {
+      var peaks = [], x = -cfg.wMax;
+      while (x < W + cfg.wMax) {
+        var p = { x: x, w: 0, h: 0 };
+        sizePeak(p, cfg);
+        peaks.push(p);
+        x += p.w * cfg.step;
+      }
+      return { peaks: peaks, cfg: cfg };
+    }
+
+    function makeRanges() {
+      return [
+        buildRange({                                  /* far ridge — pale, barely drifts */
+          wMin: H * 0.75, wMax: H * 1.45,
+          hMin: H * 0.30, hMax: H * 0.56,
+          step: 0.62, para: 0.10,
+          fill: 'rgba(10,10,11,0.055)'
+        }),
+        buildRange({                                  /* near hills — brand yellow, snow caps */
+          wMin: H * 0.50, wMax: H * 0.95,
+          hMin: H * 0.16, hMax: H * 0.32,
+          step: 0.64, para: 0.24,
+          fill: 'rgba(255,199,44,0.34)',
+          snow: 'rgba(255,255,255,0.92)'
+        })
+      ];
+    }
+
+    function scrollRange(r, dx) {
+      var p = r.peaks, cfg = r.cfg, i;
+      for (i = 0; i < p.length; i++) p[i].x -= dx * cfg.para;
+      while (p.length > 1 && p[0].x + p[0].w < 0) {
+        var first = p.shift(), last = p[p.length - 1];
+        sizePeak(first, cfg);
+        first.x = last.x + last.w * cfg.step;
+        p.push(first);
+      }
+    }
+
+    function drawRange(r) {
+      var p = r.peaks, cfg = r.cfg, base = GROUND_Y + 2, i;
+
+      ctx.fillStyle = cfg.fill;
+      ctx.beginPath();
+      ctx.moveTo(p[0].x, base);
+      for (i = 0; i < p.length; i++) {
+        ctx.lineTo(p[i].x, base);
+        ctx.lineTo(p[i].x + p[i].w / 2, base - p[i].h);
+        ctx.lineTo(p[i].x + p[i].w, base);
+      }
+      ctx.closePath();
+      ctx.fill();
+
+      if (!cfg.snow) return;
+      ctx.fillStyle = cfg.snow;
+      for (i = 0; i < p.length; i++) {
+        /* the cap is the peak's own triangle scaled down, so it sits flush */
+        var pk = p[i], capH = pk.h * 0.30, hw = (pk.w / 2) * 0.30;
+        var cx = pk.x + pk.w / 2, apex = base - pk.h;
+        ctx.beginPath();
+        ctx.moveTo(cx, apex);
+        ctx.lineTo(cx + hw, apex + capH);
+        ctx.lineTo(cx - hw, apex + capH);
+        ctx.closePath();
+        ctx.fill();
+      }
+    }
+
+    /* ---------------- lifecycle ---------------- */
+
+    function reset() {
+      runner = { x: Math.round(W * 0.12), y: GROUND_Y, vy: 0, onGround: true, legPhase: 0 };
+      obstacles = [];
+      ranges = makeRanges();
+
+      clouds = [];
+      for (var i = 0; i < 3; i++) {
+        clouds.push({
+          x: Math.random() * W,
+          y: H * 0.10 + Math.random() * H * 0.22,
+          s: (0.6 + Math.random() * 0.8) * S
+        });
+      }
+
+      distance = 0;
+      running = false;
+      gameOver = false;
+      ducking = false;
+      groundOffset = 0;
+      nextSpawn = W * 0.9;          /* breathing room before the first obstacle */
+      scoreEl.textContent = '00000';
+      hi = loadHi();
+      hiEl.textContent = String(hi).padStart(5, '0');
+    }
+
+    function start() {
+      if (running) return;
+      if (gameOver) reset();   /* clear the crash we're still standing in */
+      running = true;
+      gameOver = false;
+      overlay.classList.add('hidden');
+      lastT = null;
+      requestAnimationFrame(loop);
+    }
+
+    function endGame() {
+      running = false;
+      gameOver = true;
+      var score = Math.floor(distance / 10);
+      if (score > hi) { hi = score; saveHi(hi); }
+      hiEl.textContent = String(hi).padStart(5, '0');
+      overlayTitle.textContent = 'Game over — tap or Space to retry';
+      overlay.classList.remove('hidden');
+    }
+
+    function jump() {
+      if (!running) { start(); return; }
+      if (runner.onGround) {
+        runner.vy = ducking ? DUCK_JUMP_V : JUMP_V;
+        runner.onGround = false;
+      }
+    }
+
+    function setDuck(v) { ducking = v; }
+
+    function spawnObstacle() {
+      var t = Math.min(1, distance / RAMP);
+
+      /* birds only join once the run has settled in */
+      if (distance > W * 6 && Math.random() < 0.20 + 0.15 * t) {
+        var lift = [0.03, 0.14, 0.14, 0.26][Math.floor(Math.random() * 4)];
+        obstacles.push({
+          type: 'bird',
+          x: W + 20,
+          y: GROUND_Y - H * lift,     /* y is the bottom edge */
+          lift: lift,
+          w: 30 * S,
+          h: 20 * S,
+          wingPhase: 0
+        });
+        return 0;
+      }
+
+      var cluster = 1 + (Math.random() < 0.28 ? 1 : 0) + (Math.random() < 0.10 ? 1 : 0);
+      var x = W + 20, span = 0;
+      for (var i = 0; i < cluster; i++) {
+        var tw = (13 + Math.random() * 7) * S;
+        var th = (32 + Math.random() * 22) * S;
+        obstacles.push({ type: 'tree', x: x, y: GROUND_Y, w: tw, h: th });
+        x += tw * 0.92;               /* slight overlap reads as a copse */
+        span += tw * 0.92;
+      }
+      return span;                    /* so the next gap clears the whole copse */
+    }
+
+    function runnerBox() {
+      var isDuck = ducking && runner.onGround;
+      var legH = C_R * 0.34;
+      var full = 2 * C_R + legH;
+      var h = isDuck ? full * 0.60 : full;
+      var halfW = isDuck ? C_R * 0.92 : C_R * 0.74;
+      return {
+        x: runner.x - halfW,
+        y: runner.y - h + C_R * 0.12,
+        w: halfW * 2,
+        h: h - C_R * 0.20
+      };
+    }
+
+    var lastT = null;
+    function loop(t) {
+      if (!running) return;
+      if (lastT === null) lastT = t;
+      var dt = Math.min(0.035, (t - lastT) / 1000);
+      lastT = t;
+
+      update(dt);
+      draw();
+
+      requestAnimationFrame(loop);
+    }
+
+    function update(dt) {
+      var speed = speedNow();
+      var dx = speed * dt;
+      distance += dx;
+      groundOffset = (groundOffset + dx) % (28 * S);
+
+      /* holding down in mid-air drops you faster */
+      var g = GRAVITY * (ducking && !runner.onGround ? 2.1 : 1);
+      runner.vy += g * dt;
+      runner.y  += runner.vy * dt;
+      if (runner.y >= GROUND_Y) {
+        runner.y = GROUND_Y;
+        runner.vy = 0;
+        runner.onGround = true;
+      }
+      if (runner.onGround) runner.legPhase += dt * (10 + (speed / W) * 10);
+
+      if (distance >= nextSpawn) {
+        /* Always leave room for a full hop plus margin. The gap has to grow
+           with speed, because the distance one jump covers grows with it too. */
+        var span = spawnObstacle();
+        var hop = 0.68 * speed;
+        nextSpawn = distance + span + Math.max(W * 0.55, hop * 1.55) + Math.random() * W * 0.45;
+      }
+
+      var i;
+      for (i = 0; i < ranges.length; i++) scrollRange(ranges[i], dx);
+      for (i = 0; i < clouds.length; i++) {
+        clouds[i].x -= dx * 0.06;
+        if (clouds[i].x < -60 * S) clouds[i].x = W + 20 + Math.random() * 60;
+      }
+
+      var box = runnerBox();
+      for (i = obstacles.length - 1; i >= 0; i--) {
+        var o = obstacles[i];
+        o.x -= dx;
+        if (o.type === 'bird') o.wingPhase += dt * 9;
+        if (o.x + o.w < -20) { obstacles.splice(i, 1); continue; }
+
+        /* inset, because both sprites taper away from their bounding box */
+        var oBox = {
+          x: o.x + o.w * 0.16,
+          y: o.y - o.h * 0.90,
+          w: o.w * 0.68,
+          h: o.h * 0.82
+        };
+        if (box.x < oBox.x + oBox.w && box.x + box.w > oBox.x &&
+            box.y < oBox.y + oBox.h && box.y + box.h > oBox.y) {
+          endGame();
+          break;
+        }
+      }
+
+      scoreEl.textContent = String(Math.floor(distance / 10)).padStart(5, '0');
+    }
+
+    /* ---------------- painting ---------------- */
+
+    function drawClouds() {
+      ctx.fillStyle = 'rgba(10,10,11,0.05)';
+      for (var i = 0; i < clouds.length; i++) {
+        var c = clouds[i], s = c.s;
+        ctx.beginPath();
+        ctx.ellipse(c.x, c.y, 17 * s, 6 * s, 0, 0, Math.PI * 2);
+        ctx.ellipse(c.x + 13 * s, c.y + 2 * s, 11 * s, 4.5 * s, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function drawGround() {
+      ctx.strokeStyle = HAIR;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(0, GROUND_Y + 2);
+      ctx.lineTo(W, GROUND_Y + 2);
+      ctx.stroke();
+
+      ctx.fillStyle = HAIR;
+      var step = 28 * S;
+      for (var x = -groundOffset; x < W; x += step) {
+        ctx.fillRect(x, GROUND_Y + 7 * S, 12 * S, 2);
+      }
+    }
+
+    function drawTree(o) {
+      var w = o.w, h = o.h;
+      ctx.save();
+      ctx.translate(o.x + w / 2, o.y);
+      ctx.fillStyle = gameOver ? DEAD : INK;
+
+      ctx.fillRect(-w * 0.09, -h * 0.30, w * 0.18, h * 0.30);
+
+      for (var i = 0; i < 3; i++) {
+        var apex = -h + h * 0.24 * i;
+        var baseY = apex + h * 0.42;
+        var hw = w * (0.24 + i * 0.13);
+        ctx.beginPath();
+        ctx.moveTo(0, apex);
+        ctx.lineTo(hw, baseY);
+        ctx.lineTo(-hw, baseY);
+        ctx.closePath();
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    function drawBird(o) {
+      var w = o.w, h = o.h;
+      var flap = Math.sin(o.wingPhase) * h * 0.42;
+      ctx.save();
+      ctx.translate(o.x, o.y - o.h);
+      ctx.fillStyle = gameOver ? DEAD : INK;
+
+      ctx.beginPath();
+      ctx.ellipse(w * 0.5, h * 0.56, w * 0.30, h * 0.20, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(w * 0.78, h * 0.50);
+      ctx.lineTo(w * 1.02, h * 0.58);
+      ctx.lineTo(w * 0.78, h * 0.66);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(w * 0.44, h * 0.50);
+      ctx.lineTo(w * 0.16, h * 0.48 - flap);
+      ctx.lineTo(w * 0.52, h * 0.66);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(w * 0.56, h * 0.50);
+      ctx.lineTo(w * 0.86, h * 0.48 - flap);
+      ctx.lineTo(w * 0.48, h * 0.66);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    /* The runner is CompareMyTrip's C — a thick ring with the right side open,
+       on a pair of little legs. */
+    function drawRunner() {
+      var isDuck = ducking && runner.onGround;
+      var col  = gameOver ? DEAD : INK;
+      var legH = C_R * 0.34;
+      var legW = C_R * 0.26;
+
+      ctx.save();
+      ctx.translate(runner.x, runner.y);
+      if (isDuck) ctx.transform(1.18, 0, 0, 0.60, 0, 0);
+
+      ctx.fillStyle = col;
+      if (runner.onGround) {
+        var lp = Math.sin(runner.legPhase);
+        ctx.fillRect(-C_R * 0.46 - legW / 2, -legH, legW, legH * (lp > 0 ? 1 : 0.55));
+        ctx.fillRect( C_R * 0.30 - legW / 2, -legH, legW, legH * (lp < 0 ? 1 : 0.55));
+      } else {
+        ctx.fillRect(-C_R * 0.46 - legW / 2, -legH, legW, legH * 0.50);
+        ctx.fillRect( C_R * 0.30 - legW / 2, -legH, legW, legH * 0.85);
+      }
+
+      var cy = -legH - C_R;
+      var lw = C_R * 0.60;
+      ctx.strokeStyle = col;
+      ctx.lineWidth = lw;
+      ctx.lineCap = 'butt';
+      ctx.beginPath();
+      ctx.arc(0, cy, C_R - lw / 2, Math.PI * 0.30, Math.PI * 1.70);
+      ctx.stroke();
+
+      /* eye, in the C's opening */
+      ctx.fillStyle = gameOver ? DEAD : YELLOW;
+      ctx.beginPath();
+      ctx.arc(C_R * 0.13, cy - C_R * 0.20, C_R * 0.15, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    function drawScene() {
+      ctx.clearRect(0, 0, W, H);
+      drawClouds();
+      for (var i = 0; i < ranges.length; i++) drawRange(ranges[i]);
+      drawGround();
+    }
+
+    function draw() {
+      drawScene();
+      for (var i = 0; i < obstacles.length; i++) {
+        if (obstacles[i].type === 'tree') drawTree(obstacles[i]);
+        else drawBird(obstacles[i]);
+      }
+      drawRunner();
+    }
+
+    function drawIdle() {
+      drawScene();
+      drawRunner();
+    }
+
+    /* ---------------- input ---------------- */
+
+    function poke() {
+      stageEl.focus();
+      if (!running) start(); else jump();
+    }
+
+    stageEl.addEventListener('click', poke);
+
+    stageEl.addEventListener('touchstart', function (e) {
+      e.preventDefault();
+      poke();
+    }, { passive: false });
+
+    window.addEventListener('keydown', function (e) {
+      if (document.activeElement && ['INPUT','TEXTAREA'].indexOf(document.activeElement.tagName) !== -1) return;
+      if (e.code === 'Space' || e.code === 'ArrowUp') {
+        e.preventDefault();
+        if (!running) start(); else jump();
+      } else if (e.code === 'ArrowDown') {
+        e.preventDefault();
+        setDuck(true);
+      }
+    });
+
+    window.addEventListener('keyup', function (e) {
+      if (e.code === 'ArrowDown') setDuck(false);
+    });
+
+    var resizeTimer;
+    window.addEventListener('resize', function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function () {
+        var wasRunning = running;
+        resize();
+        if (!wasRunning) {
+          reset();
+          drawIdle();
+          return;
+        }
+        /* keep the run alive: re-seat everything on the new ground line */
+        runner.x = Math.round(W * 0.12);
+        if (runner.onGround) runner.y = GROUND_Y;
+        for (var i = 0; i < obstacles.length; i++) {
+          var o = obstacles[i];
+          o.y = o.type === 'tree' ? GROUND_Y : GROUND_Y - H * o.lift;
+        }
+      }, 120);
+    });
+
+    resize();
+    reset();
+    drawIdle();
+  })();
+  </script>
 
 </body>
 </html>
