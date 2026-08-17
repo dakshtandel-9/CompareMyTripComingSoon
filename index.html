@@ -24,6 +24,8 @@
     height: 100%;
     background: var(--white);
     color: var(--ink);
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 
   body {
@@ -274,7 +276,9 @@
     color: var(--grey);
   }
 
-  @media (max-width: 620px), (max-height: 480px) {
+  /* stack only when the screen is actually narrow — a landscape phone is short,
+     not narrow, and reads better with the two columns kept */
+  @media (max-width: 620px) {
     .middle { grid-template-columns: 1fr; }
     .game-wrap { order: 2; }
   }
@@ -341,20 +345,76 @@
 
   /* ---------------- responsive ---------------- */
 
+  /* Phones. The one-screen shell can't hold the stacked layout, so here the
+     page grows past the viewport and scrolls instead of clipping. Everything
+     else is sized off vw rather than vh, since vh buys nothing once we scroll. */
   @media (max-width: 620px) {
+    html, body { height: auto; min-height: 100%; }
+    body { overflow: visible; }
+
+    .screen {
+      height: auto;
+      min-height: 100dvh;
+      overflow: visible;
+      gap: 24px;
+      padding: 22px 18px;
+      padding-bottom: max(24px, env(safe-area-inset-bottom));
+    }
+
+    .top img { height: 28px; }
+
+    .middle {
+      align-content: start;
+      gap: 26px;
+    }
+
+    .stage {
+      gap: 15px;
+      padding: 0;
+    }
+
+    .eyebrow { font-size: 10px; letter-spacing: 0.2em; gap: 10px; }
+    .eyebrow::before { width: 24px; }
+
+    h1 { font-size: clamp(1.6rem, 8.4vw, 3rem); }
+    .sub { font-size: clamp(13px, 3.6vw, 15.5px); }
+
+    .chips { gap: 7px; }
+    .chips li { font-size: 10.5px; padding: 7px 11px; }
+
+    /* a touch taller, so the runner and the birds stay readable at phone width */
+    .game-stage { aspect-ratio: 16 / 9; }
+    .game-head { font-size: 10px; }
+    .game-hint { font-size: 10px; }
+
     .rail {
       grid-template-columns: 1fr;
-      gap: clamp(8px, 1.4vh, 14px);
+      gap: 12px;
+      padding-top: 18px;
     }
-    .rail .value { font-size: clamp(13px, 3.6vw, 16px); }
-    .sub { font-size: clamp(12.5px, 3.3vw, 15px); }
-    h1 { font-size: clamp(1.6rem, 8.4vw, 3rem); }
+    .rail .icon { width: 34px; height: 34px; }
+    .rail .label { font-size: 9px; }
+    .rail .value { font-size: clamp(14px, 4vw, 16px); }
   }
 
   /* short viewports (landscape phones) shed the least-critical row */
   @media (max-height: 480px) {
     .chips { display: none; }
     .sub { display: none; }
+  }
+
+  /* landscape phones: keep the wide game box, and let anything left over scroll */
+  @media (max-height: 480px) and (orientation: landscape) {
+    html, body { height: auto; min-height: 100%; }
+    body { overflow: visible; }
+
+    .screen {
+      height: auto;
+      min-height: 100dvh;
+      overflow: visible;
+    }
+
+    .game-stage { aspect-ratio: 16 / 7; }
   }
 
   @media (prefers-reduced-motion: reduce) {
